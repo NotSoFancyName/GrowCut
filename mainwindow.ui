@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>667</width>
-    <height>344</height>
+    <width>759</width>
+    <height>513</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,37 +20,82 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>390</x>
-      <y>20</y>
+      <x>640</x>
+      <y>70</y>
       <width>93</width>
       <height>28</height>
      </rect>
     </property>
     <property name="text">
-     <string>PushButton</string>
+     <string>Split</string>
     </property>
    </widget>
-   <widget class="QGraphicsView" name="graphicsView">
+   <widget class="QRadioButton" name="radioButton">
     <property name="geometry">
      <rect>
-      <x>30</x>
+      <x>640</x>
       <y>10</y>
-      <width>331</width>
-      <height>271</height>
+      <width>95</width>
+      <height>21</height>
      </rect>
     </property>
+    <property name="text">
+     <string>Object</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QRadioButton" name="radioButton_2">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>20</y>
-      <width>53</width>
-      <height>16</height>
+      <x>640</x>
+      <y>40</y>
+      <width>95</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Background</string>
+    </property>
+   </widget>
+   <widget class="myQlabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>631</width>
+      <height>441</height>
      </rect>
     </property>
     <property name="text">
      <string>TextLabel</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_2">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>110</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>New image...</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="pushButton_3">
+    <property name="geometry">
+     <rect>
+      <x>640</x>
+      <y>150</y>
+      <width>93</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reset</string>
     </property>
    </widget>
   </widget>
@@ -59,7 +104,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>667</width>
+     <width>759</width>
      <height>25</height>
     </rect>
    </property>
@@ -75,6 +120,13 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>myQlabel</class>
+   <extends>QLabel</extends>
+   <header location="global">myqlabel.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

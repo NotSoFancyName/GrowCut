@@ -14,9 +14,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    growcut.cpp
+    growcut.cpp \
+    myqlabel.cpp
 
 HEADERS  += mainwindow.h \
-    growcut.h
+    growcut.h \
+    myqlabel.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    myqlabel.ui
+
+
+
+

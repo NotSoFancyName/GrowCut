@@ -8,7 +8,6 @@
 
 
 // Algorithm from http://www.graphicon.ru/oldgr/en/publications/text/gc2005vk.pdf
-// implemented by Volodymyr Pankin 23.04.2017
 
 class GrowCut
 {
@@ -23,15 +22,19 @@ public:
         BACKGROUND = 2
     };
 
+    //explict
+
     GrowCut();
 
-    GrowCut(QImage image, std::vector<QRect> Object, std::vector<QRect> Background);
+    bool init(QImage &image, std::vector<QRect> &Object, std::vector<QRect> &Background);
+
+    QImage getObject();
 
     unsigned int Split();
 
     std::vector<class Cell>  von_Neumann_Neighborhood(unsigned int x, unsigned int y);
 
-    bool nextState();
+    bool nextState(double max_norm);
 
     class Cell getCell(int x, int y);
 
@@ -60,6 +63,8 @@ private:
     double normSub(QRgb pix1,QRgb pix2);
 
     double function_G(double x, double max);
+
+    QImage proccessingImg;
 };
 
 #endif // GROWCUT_H
