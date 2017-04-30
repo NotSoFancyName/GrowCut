@@ -23,9 +23,13 @@ private:
 signals:
    void clicked(QMouseEvent* event);
    void release(QMouseEvent* event);
+   //void Paint(QPaintEvent *event);
+
 public:
    void mousePressEvent(QMouseEvent* event) ;
    void mouseReleaseEvent(QMouseEvent* event);
+   //void paintEvent(QPaintEvent *event);
+
 };
 
 #endif // MYQLABEL_H

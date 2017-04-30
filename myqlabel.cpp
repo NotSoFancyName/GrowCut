@@ -27,3 +27,7 @@ void myQlabel::mouseReleaseEvent(QMouseEvent* event) {
 
 }
 
+void myQlabel::paintEvent(QPaintEvent *event){
+    emit Paint(QPaintEvent *event);
+}
+

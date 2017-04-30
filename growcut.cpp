@@ -61,6 +61,7 @@ std::vector<class GrowCut::Cell> GrowCut::von_Neumann_Neighborhood(unsigned int 
 // next state of cellular automaton
 bool GrowCut::nextState(double max_norm)
 {
+
     bool changed = false;
     for(unsigned int i = 0; i < cells.size(); i++)
     {

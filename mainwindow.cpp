@@ -81,16 +81,7 @@ void MainWindow::on_radioButton_2_clicked()
 
 // adding first diaganal point of the rect
 void MainWindow::onClick(QMouseEvent *event)
-{
-    prev = event->pos();
-    return;
-}
 
-// adding a rectangular
-void MainWindow::onRelease(QMouseEvent *event)
-{
-    QPoint p = event->pos();
-    if(current_Object_Selection){
         object_parts.push_back(QRect(prev,p));
     }
     else{
@@ -123,3 +114,5 @@ void MainWindow::on_pushButton_3_clicked()
     object_parts.erase(object_parts.begin(), object_parts.end());
     background_parts.erase(background_parts.begin(), background_parts.end());
 }
+
+
