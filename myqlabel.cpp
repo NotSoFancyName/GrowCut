@@ -1,6 +1,9 @@
 #include "myqlabel.h"
 #include "ui_myqlabel.h"
 //#include <QDebug>
+#include <QPainter>
+
+
 
 myQlabel::myQlabel(QWidget* parent) :
     QLabel(parent),
@@ -24,10 +27,8 @@ void myQlabel::mousePressEvent(QMouseEvent* event) {
 void myQlabel::mouseReleaseEvent(QMouseEvent* event) {
 
    emit release(event);
+   update();
 
 }
 
-void myQlabel::paintEvent(QPaintEvent *event){
-    emit Paint(QPaintEvent *event);
-}
 

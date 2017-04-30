@@ -9,20 +9,37 @@ GrowCut::GrowCut()
 bool GrowCut::init(QImage &image, std::vector<QRect> &Object, std::vector<QRect> &Background)
 {
 
+
     cells = std::vector<std::vector<Cell> >((unsigned int)image.width(),std::vector<Cell>( (unsigned int)image.height() ));
     this->proccessingImg = image;
+    neighbors = std::vector<std::vector<std::vector<Cell*> > >((unsigned int)image.width(),std::vector<std::vector<Cell*> >( (unsigned int)image.height() ));
+    vector_difference = std::vector<std::vector<std::vector<double> > >((unsigned int)image.width(),std::vector<std::vector<double> >( (unsigned int)image.height() ));
 
     for(int i = 0; i < image.width(); i++)
     {
-        for(int j = 0; j < image.height(); j++)
+        for(int j = 0; j < image.height(); j++ )
         {
             cells[i][j].Label = label_of_the_Cell(Object,Background, QPoint(i,j));
             cells[i][j].Feature_vector =  image.pixel(QPoint(i,j));
 
             if(cells[i][j].Label != GrowCut::NONE)
                 cells[i][j].Strenght = 1.0;
+            else
+                cells[i][j].Strenght = 0.1;
         }
     }
+
+    max_norm = find_MaxPNorm();
+
+    for(int i = 0; i < image.width(); i++)
+    {
+        for(int j = 0; j < image.height(); j++ )
+        {
+            von_Neumann_Neighborhood(i,j);
+        }
+    }
+
+
 
     return true;
 
@@ -43,48 +60,71 @@ GrowCut::Cell::Cell(label l, double S, QRgb Fvector)
 }
 
 // finding neighbohrs of the current cell
-std::vector<class GrowCut::Cell> GrowCut::von_Neumann_Neighborhood(unsigned int x, unsigned int y)
+void GrowCut::von_Neumann_Neighborhood(unsigned int x, unsigned int y)
 {
-    std::vector<class Cell> res;
-    if(x+1 < proccessingImg.width())
-        res.push_back(cells[x+1][y]);
-    if( (y-1) != -1)
-        res.push_back(cells[x][y-1]);
-    if( (x-1) != -1)
-        res.push_back(cells[x-1][y]);
-    if(x+1 < proccessingImg.height())
-        res.push_back(cells[x][y+1]);
+    //std::vector<class GrowCut::Cell*> res(0);
+    if(x+1 < proccessingImg.width()){
+        Cell* c = &cells[x+1][y];
+        neighbors[x][y].push_back(c);
+        vector_difference[x][y].push_back(
+                    function_G(normSub(cells[x][y].Feature_vector,cells[x+1][y].Feature_vector)
+                    ,max_norm)
+                    );
+    }
+    if( (y-1) != -1){
+         Cell* c = &cells[x][y-1];
+         neighbors[x][y].push_back(c);
+         vector_difference[x][y].push_back(
+                     function_G(normSub(cells[x][y].Feature_vector,cells[x][y-1].Feature_vector)
+                     ,max_norm)
+                     );
+    }
+    if( (x-1) != -1){
+       Cell* c = &cells[x-1][y];
+         neighbors[x][y].push_back(c);
+         vector_difference[x][y].push_back(
+                     function_G(normSub(cells[x][y].Feature_vector,cells[x-1][y].Feature_vector)
+                     ,max_norm)
+                     );
+    }
+    if(x+1 < proccessingImg.height()){
+        Cell* c = &cells[x][y+1];
+        neighbors[x][y].push_back(c);
+        vector_difference[x][y].push_back(
+                    function_G(normSub(cells[x][y].Feature_vector,cells[x][y+1].Feature_vector)
+                    ,max_norm)
+                    );
+    }
 
-    return res;
+   // return res;
 }
 
 // next state of cellular automaton
-bool GrowCut::nextState(double max_norm)
+bool GrowCut::nextState()
 {
-
     bool changed = false;
     for(unsigned int i = 0; i < cells.size(); i++)
     {
         for(unsigned int j = 0; j < cells[i].size(); j++)
         {
-            std::vector<Cell> neighborhood = von_Neumann_Neighborhood(i,j);
-
-            for(unsigned int k = 0; k < neighborhood.size(); k++)
+           // std::vector<Cell> neighborhood = von_Neumann_Neighborhood(i,j);
+            if(cells[i][j].Strenght != 1.0){
+            for(unsigned int k = 0; k < neighbors[i][j].size(); k++)
             {
-               if(neighborhood[k].Label != cells[i][j].Label) {
+               if(neighbors[i][j][k]->Label != cells[i][j].Label) {
 
                    double cell_assault_power =
-                        function_G( normSub(cells[i][j].Feature_vector,
-                          neighborhood[k].Feature_vector), max_norm) *
-                            neighborhood[k].Strenght;
+                        vector_difference[i][j][k] *
+                            neighbors[i][j][k]->Strenght;
 
                    if( cell_assault_power > cells[i][j].Strenght )
                    {
                         changed = true;
-                        cells[i][j].Label = neighborhood[k].Label;
+                        cells[i][j].Label = neighbors[i][j][k]->Label;
                         cells[i][j].Strenght = cell_assault_power;
                    }
                }
+            }
             }
         }
     }
@@ -159,9 +199,9 @@ GrowCut::label GrowCut::label_of_the_Cell(std::vector<QRect> Object, std::vector
 unsigned int GrowCut::Split(){
 
     unsigned int counter = 0;
-    double max_fv = find_MaxPNorm();
+    //double max_fv = find_MaxPNorm();
 
-    while(nextState(max_fv)){
+    while(nextState()){
         counter++;
 
         if (counter > 1000)

@@ -4,6 +4,14 @@
 #include <QWidget>
 #include <QLabel>
 #include <QMouseEvent>
+#include <QDesktopWidget>
+#include <QMainWindow>
+#include <QGraphicsScene>
+#include <QGraphicsView>
+#include <QGraphicsPixmapItem>
+#include <QException>
+#include <QFileDialog>
+
 
 namespace Ui {
 class myQlabel;
@@ -23,13 +31,10 @@ private:
 signals:
    void clicked(QMouseEvent* event);
    void release(QMouseEvent* event);
-   //void Paint(QPaintEvent *event);
-
 public:
    void mousePressEvent(QMouseEvent* event) ;
    void mouseReleaseEvent(QMouseEvent* event);
-   //void paintEvent(QPaintEvent *event);
-
+  // void paintEvent(QPaintEvent* e);
 };
 
 #endif // MYQLABEL_H

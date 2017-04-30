@@ -2,6 +2,9 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+//#include <QAbstractScrollArea>
+#include <QTimer>
+#include <QTimerEvent>
 
 namespace Ui {
 class MainWindow;
@@ -46,11 +49,12 @@ private slots:
 
     void onRelease(QMouseEvent* event);
 
-   // void draw_rect(QPaintEvent *event);
-
     void on_pushButton_2_clicked();
 
     void on_pushButton_3_clicked();
+
+public:
+   // void paintEvent(QPaintEvent *event);
 
 private:
     Ui::MainWindow *ui;

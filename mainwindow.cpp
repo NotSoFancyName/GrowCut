@@ -2,14 +2,8 @@
 #include "ui_mainwindow.h"
 #include "growcut.h"
 #include "myqlabel.h"
-#include <QDesktopWidget>
-#include <QMainWindow>
-#include <QGraphicsScene>
-#include <QGraphicsView>
-#include <QGraphicsPixmapItem>
-#include <QException>
-#include <QFileDialog>
-#include <QPainter>
+
+
 
 
 std::vector<QRect> object_parts;
@@ -81,14 +75,22 @@ void MainWindow::on_radioButton_2_clicked()
 
 // adding first diaganal point of the rect
 void MainWindow::onClick(QMouseEvent *event)
+{
+    prev = event->pos();
+    return;
+}
 
+// adding a rectangular
+void MainWindow::onRelease(QMouseEvent *event)
+{
+    QPoint p = event->pos(); 
+    //p = QPoint(p.x()+1, p.y()+1);
+    if(current_Object_Selection){
         object_parts.push_back(QRect(prev,p));
     }
     else{
         background_parts.push_back(QRect(prev,p));
     }
-
-
     return;
 }
 
