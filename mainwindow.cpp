@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "growcut.h"
 #include "myqlabel.h"
+
 
 
 
@@ -10,9 +10,11 @@ std::vector<QRect> object_parts;
 std::vector<QRect> background_parts;
 QPoint prev;
 QImage myImage;
+QImage resImage;
 bool current_Object_Selection;
 QString path = "c:\\!try\\test.jpg";
-
+GrowCut * c;
+//MyThread t;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -24,10 +26,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->label, &myQlabel::clicked,this, &MainWindow::onClick );
     connect(ui->label, &myQlabel::release,this, &MainWindow::onRelease );
 
+
     current_Object_Selection = true;
     ui->label->setAlignment( Qt::AlignLeft | Qt::AlignTop );
 
     myImage = QImage(path);
+    resImage = myImage;
     QPixmap p = QPixmap::fromImage(myImage);
     ui->label->setPixmap(p);
 
@@ -43,17 +47,17 @@ void MainWindow::on_pushButton_clicked(bool checked)
 {
 
     if( object_parts.size() != 0 && background_parts.size() != 0 ){
-        QImage i = myImage;
-        std::vector<QRect> o = object_parts;
-        std::vector<QRect> b = background_parts;
+        //resImage = myImage;
 
         try{
-            GrowCut *c = new GrowCut();
-            c->init(i,o,b);
+            c = new GrowCut();
+            c->init(myImage,object_parts,background_parts);
             c->Split();
             QImage new_img = c->getObject();
             QPixmap p = QPixmap::fromImage(new_img);
             ui->label->setPixmap(p);
+            //MyThread t(c,object_parts,background_parts,&resImage);
+            //t.start();
         }
         catch(QException exp){
 
@@ -118,3 +122,26 @@ void MainWindow::on_pushButton_3_clicked()
 }
 
 
+
+
+void MyThread::run()
+{
+    c = new GrowCut();
+    c->init(*i,o,b);
+    c->Split();
+    exit();
+}
+
+MyThread::MyThread(GrowCut* c ,std::vector<QRect> &object_parts, std::vector<QRect> &background_parts,QImage *i)
+{
+  this->o = object_parts;
+  this->b = background_parts;
+  this->i = i;
+  this->c = c;
+}
+
+
+void MainWindow::updateCaption(){
+    QPixmap p = QPixmap::fromImage(resImage);
+    ui->label->setPixmap(p);
+}

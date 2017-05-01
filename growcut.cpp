@@ -2,7 +2,7 @@
 
 GrowCut::GrowCut()
 {
-
+// ...
 }
 
 //initialize initial conditions

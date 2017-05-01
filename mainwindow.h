@@ -2,9 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-//#include <QAbstractScrollArea>
 #include <QTimer>
 #include <QTimerEvent>
+//#include <thread>
+#include <QThread>
+#include <QImage>
+#include "growcut.h"
 
 namespace Ui {
 class MainWindow;
@@ -52,12 +55,34 @@ private slots:
     void on_pushButton_2_clicked();
 
     void on_pushButton_3_clicked();
+public slots:
+    //void onFinished();
+    void updateCaption();
 
 public:
    // void paintEvent(QPaintEvent *event);
+
+
+
+
 
 private:
     Ui::MainWindow *ui;
 };
 
+class MyThread : public QThread
+{
+    Q_OBJECT
+
+public:
+    void run();
+    MyThread(GrowCut* c ,std::vector<QRect> &object_parts, std::vector<QRect> &background_parts,QImage *i);
+   // MyThread();
+    GrowCut * c;
+    std::vector<QRect> o;
+    std::vector<QRect> b;
+    QImage *i;
+signals:
+   // void finished();
+};
 #endif // MAINWINDOW_H
