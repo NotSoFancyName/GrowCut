@@ -1,0 +1,1 @@
+Select "Object" radio and click severel times on the object parts you want to select then  do the same with the background
