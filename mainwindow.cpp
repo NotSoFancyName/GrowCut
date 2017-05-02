@@ -6,6 +6,7 @@
 
 
 
+
 std::vector<QRect> object_parts;
 std::vector<QRect> background_parts;
 QPoint prev;
@@ -52,12 +53,12 @@ void MainWindow::on_pushButton_clicked(bool checked)
         try{
             c = new GrowCut();
             c->init(myImage,object_parts,background_parts);
-            c->Split();
-            QImage new_img = c->getObject();
-            QPixmap p = QPixmap::fromImage(new_img);
-            ui->label->setPixmap(p);
-            //MyThread t(c,object_parts,background_parts,&resImage);
-            //t.start();
+            while( c->nextState()){
+                QImage new_img = c->getObject();
+                QPixmap p = QPixmap::fromImage(new_img);
+                ui->label->setPixmap(p);
+                qApp->processEvents();
+            }
         }
         catch(QException exp){
 
@@ -119,6 +120,7 @@ void MainWindow::on_pushButton_3_clicked()
 {
     object_parts.erase(object_parts.begin(), object_parts.end());
     background_parts.erase(background_parts.begin(), background_parts.end());
+    ui->label->setPixmap(QPixmap::fromImage(myImage));
 }
 
 

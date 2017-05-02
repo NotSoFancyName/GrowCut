@@ -133,6 +133,8 @@ bool GrowCut::nextState()
 
 }
 
+
+
 // defines the "difference" between two cells
 double GrowCut::function_G(double x, double max)
 {

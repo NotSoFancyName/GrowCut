@@ -8,6 +8,7 @@
 #include <QThread>
 #include <QImage>
 #include "growcut.h"
+#include <QApplication>
 
 namespace Ui {
 class MainWindow;

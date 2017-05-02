@@ -5,6 +5,7 @@
 #include <QImage>
 #include <QColor>
 #include <QtCore/qmath.h>
+#include <thread>
 
 
 // Algorithm from http://www.graphicon.ru/oldgr/en/publications/text/gc2005vk.pdf
