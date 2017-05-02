@@ -22,10 +22,15 @@ bool GrowCut::init(QImage &image, std::vector<QRect> &Object, std::vector<QRect>
             cells[i][j].Label = label_of_the_Cell(Object,Background, QPoint(i,j));
             cells[i][j].Feature_vector =  image.pixel(QPoint(i,j));
 
-            if(cells[i][j].Label != GrowCut::NONE)
-                cells[i][j].Strenght = 1.0;
-            else
-                cells[i][j].Strenght = 0.1;
+            if(cells[i][j].Label == GrowCut::BACKGROUND){
+                    cells[i][j].Strenght = 0.9;
+            }
+            else if(cells[i][j].Label == GrowCut::OBJECT){
+                    cells[i][j].Strenght = 1.0;
+            }
+            else{
+                    cells[i][j].Strenght = 0.0;
+            }
         }
     }
 
@@ -100,9 +105,9 @@ void GrowCut::von_Neumann_Neighborhood(unsigned int x, unsigned int y)
 }
 
 // next state of cellular automaton
-bool GrowCut::nextState()
+unsigned int GrowCut::nextState()
 {
-    bool changed = false;
+    bool counter = 0;
     for(unsigned int i = 0; i < cells.size(); i++)
     {
         for(unsigned int j = 0; j < cells[i].size(); j++)
@@ -119,7 +124,7 @@ bool GrowCut::nextState()
 
                    if( cell_assault_power > cells[i][j].Strenght )
                    {
-                        changed = true;
+                        counter++;
                         cells[i][j].Label = neighbors[i][j][k]->Label;
                         cells[i][j].Strenght = cell_assault_power;
                    }
@@ -129,7 +134,7 @@ bool GrowCut::nextState()
         }
     }
 
-    return changed;
+    return counter;
 
 }
 
@@ -228,4 +233,8 @@ QImage GrowCut::getObject()
     }
 
     return proccessingImg;
+}
+
+unsigned int GrowCut::RecomendedChange(){
+    return (unsigned int)(proccessingImg.height()* proccessingImg.width() * 0.00001);
 }

@@ -52,8 +52,9 @@ void MainWindow::on_pushButton_clicked(bool checked)
 
         try{
             c = new GrowCut();
-            c->init(myImage,object_parts,background_parts);
-            while( c->nextState()){
+            c->init(myImage,object_parts,background_parts);        
+            // int rec_size = c->RecomendedChange();
+            while(c->nextState()){
                 QImage new_img = c->getObject();
                 QPixmap p = QPixmap::fromImage(new_img);
                 ui->label->setPixmap(p);

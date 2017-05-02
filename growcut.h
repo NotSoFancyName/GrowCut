@@ -31,9 +31,9 @@ public:
 
     unsigned int Split();
 
-    void von_Neumann_Neighborhood(unsigned int x, unsigned int y);
+    unsigned int nextState();
 
-    bool nextState();
+    unsigned int RecomendedChange();
 
     class Cell getCell(int x, int y);
 
@@ -70,6 +70,10 @@ private:
     QImage proccessingImg;
 
     double max_norm;
+
+    void von_Neumann_Neighborhood(unsigned int x, unsigned int y);
+
+
 };
 
 #endif // GROWCUT_H
