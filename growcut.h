@@ -6,6 +6,9 @@
 #include <QColor>
 #include <QtCore/qmath.h>
 #include <thread>
+#include <map>
+#include <QPoint>
+#include <utility>
 
 
 // Algorithm from http://www.graphicon.ru/oldgr/en/publications/text/gc2005vk.pdf
@@ -35,6 +38,10 @@ public:
 
     unsigned int RecomendedChange();
 
+    unsigned int nextStateThread(unsigned int &n);
+
+    void particialNextState(unsigned int x , unsigned int y, unsigned int xx, unsigned int yy,  unsigned int &counter);
+
     class Cell getCell(int x, int y);
 
     class Cell
@@ -47,15 +54,19 @@ public:
         label Label;
         double Strenght;
         QRgb Feature_vector;
+
+        bool operator <(const Cell& rhs) const {return true;}
     };
 
 private:
 
-    std::vector< std::vector<Cell> > cells;
+    std::vector< std::vector<Cell > > cells;
 
     std::vector<std::vector<std::vector<class Cell*> > > neighbors;
 
     std::vector<std::vector<std::vector<double> > > vector_difference;
+
+    std::map < Cell, QPoint> Change;
 
     label label_of_the_Cell(std::vector<QRect> Object, std::vector<QRect> Background, QPoint p);
 
@@ -73,7 +84,13 @@ private:
 
     void von_Neumann_Neighborhood(unsigned int x, unsigned int y);
 
+    std::vector<int> width_it;
+    std::vector<int> Height_it;
+    std::vector< std::thread* > t;
+    std::vector< unsigned int > counters;
+
 
 };
+
 
 #endif // GROWCUT_H

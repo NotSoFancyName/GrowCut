@@ -54,12 +54,16 @@ void MainWindow::on_pushButton_clicked(bool checked)
             c = new GrowCut();
             c->init(myImage,object_parts,background_parts);        
             // int rec_size = c->RecomendedChange();
-            while(c->nextState()){
+            unsigned int n = 2;
+            while(c->nextStateThread(n)){
                 QImage new_img = c->getObject();
                 QPixmap p = QPixmap::fromImage(new_img);
                 ui->label->setPixmap(p);
                 qApp->processEvents();
             }
+            //QImage new_img = c->getObject();
+            //QPixmap p = QPixmap::fromImage(new_img);
+            //ui->label->setPixmap(p);
         }
         catch(QException exp){
 
@@ -124,24 +128,6 @@ void MainWindow::on_pushButton_3_clicked()
     ui->label->setPixmap(QPixmap::fromImage(myImage));
 }
 
-
-
-
-void MyThread::run()
-{
-    c = new GrowCut();
-    c->init(*i,o,b);
-    c->Split();
-    exit();
-}
-
-MyThread::MyThread(GrowCut* c ,std::vector<QRect> &object_parts, std::vector<QRect> &background_parts,QImage *i)
-{
-  this->o = object_parts;
-  this->b = background_parts;
-  this->i = i;
-  this->c = c;
-}
 
 
 void MainWindow::updateCaption(){

@@ -264,8 +264,6 @@ unsigned int GrowCut::nextStateThread(unsigned int &n){
         delete t[i];
     }
 
-
-
     t.erase(t.begin(),t.end());
 
     for (auto it = Change.begin(); it != Change.end(); ++it)

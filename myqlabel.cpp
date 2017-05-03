@@ -1,6 +1,5 @@
 #include "myqlabel.h"
 #include "ui_myqlabel.h"
-//#include <QDebug>
 #include <QPainter>
 
 

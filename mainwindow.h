@@ -2,10 +2,6 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QTimer>
-#include <QTimerEvent>
-//#include <thread>
-#include <QThread>
 #include <QImage>
 #include "growcut.h"
 #include <QApplication>
@@ -71,19 +67,5 @@ private:
     Ui::MainWindow *ui;
 };
 
-class MyThread : public QThread
-{
-    Q_OBJECT
 
-public:
-    void run();
-    MyThread(GrowCut* c ,std::vector<QRect> &object_parts, std::vector<QRect> &background_parts,QImage *i);
-   // MyThread();
-    GrowCut * c;
-    std::vector<QRect> o;
-    std::vector<QRect> b;
-    QImage *i;
-signals:
-   // void finished();
-};
 #endif // MAINWINDOW_H
