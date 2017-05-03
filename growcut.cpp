@@ -51,10 +51,9 @@ bool GrowCut::init(QImage &image, std::vector<QRect> &Object, std::vector<QRect>
     }
 
     q_treads = n;
-
+    counters = std::vector<unsigned int>( q_treads * q_treads , 1);
 
     return true;
-
 }
 
 GrowCut::Cell::Cell(): Label(NONE), Strenght(0),Feature_vector(QRgb()){
@@ -207,7 +206,7 @@ GrowCut::label GrowCut::label_of_the_Cell(std::vector<QRect> Object, std::vector
     return GrowCut::NONE;
 }
 
-// split object and background
+// split object and background,was used for total split, now deprecated
 unsigned int GrowCut::Split(){
 
     unsigned int counter = 0;
@@ -223,7 +222,7 @@ unsigned int GrowCut::Split(){
     return counter;
 }
 
-//get image without background
+//get image without background (set black color to background pixels)
 QImage GrowCut::getObject()
 {
     for(int i = 0; i < proccessingImg.width(); i++)
@@ -240,40 +239,26 @@ QImage GrowCut::getObject()
     return proccessingImg;
 }
 
-unsigned int GrowCut::RecomendedChange(){
-    return (unsigned int)(proccessingImg.height()* proccessingImg.width() * 0.00001);
-}
-
+//get cellular automata state using threads (here I am using 4 thread becouse i have 4core proc)
 unsigned int GrowCut::nextStateThread(){
 
     unsigned int res = 0;
-
-    counters  = std::vector<unsigned int>( q_treads * q_treads , 0);
-
     for(unsigned int i = 0; i < q_treads; i++){
         for(unsigned int j = 0; j < q_treads; j++){
-                 t.push_back(new std::thread( &GrowCut::particialNextState ,this, width_it[i], width_it[i+1],
+                 threads.push_back(new std::thread( &GrowCut::particialNextState ,this, width_it[i], width_it[i+1],
                              Height_it[j], Height_it[j+1], std::ref( counters[i*q_treads + j] ) ));
         }
     }
 
-    for(unsigned int i = 0; i < t.size(); i++){
-        t[i]->join();
+    for(unsigned int i = 0; i < threads.size(); i++){
+        threads[i]->join();
     }
 
-
-    for(unsigned int i = 0; i < t.size(); i++){
-         delete t[i];
+    for(unsigned int i = 0; i < threads.size(); i++){
+         delete threads[i];
     }
 
-    t.erase(t.begin(),t.end());
-
-    for (auto it = Change.begin(); it != Change.end(); ++it)
-    {
-       cells[it->first.x()][it->first.y()] = it->second;
-    }
-
-    Change.erase(Change.begin(),Change.end());
+    threads.erase(threads.begin(),threads.end());
 
     for(unsigned int i = 0; i < counters.size(); i++){
        res += counters[i];
@@ -282,7 +267,14 @@ unsigned int GrowCut::nextStateThread(){
     return res;
 }
 
+//next state of the part of the area and counter for quantity of automata changes
 void GrowCut::particialNextState(unsigned int x , unsigned int xx, unsigned int y, unsigned int yy, unsigned int &counter){
+
+    if(!counter){
+        return;
+    }
+
+    counter = 0;
 
     for( int i = x; i < xx; i++)
     {
@@ -300,12 +292,13 @@ void GrowCut::particialNextState(unsigned int x , unsigned int xx, unsigned int 
 
                    if( cell_assault_power > cells[i][j].Strenght )
                    {
-                        Cell change_cell(neighbors[i][j][k]->Label,cell_assault_power,cells[i][j].Feature_vector);
+                        //Cell change_cell(neighbors[i][j][k]->Label,cell_assault_power,cells[i][j].Feature_vector);
 
                         counter++;
 
                         now_it_gonna_work.lock();
-                        Change.insert( std::pair< MyPoint, Cell >(  MyPoint(i,j),change_cell  ) );
+                        cells[i][j].Label = neighbors[i][j][k]->Label;
+                        cells[i][j].Strenght = cell_assault_power;
                         now_it_gonna_work.unlock();
                    }
                }
@@ -313,6 +306,4 @@ void GrowCut::particialNextState(unsigned int x , unsigned int xx, unsigned int 
             }
         }
     }
-
-    //return counter;
 }

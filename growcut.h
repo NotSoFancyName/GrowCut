@@ -37,11 +37,7 @@ public:
 
     unsigned int nextState();
 
-    unsigned int RecomendedChange();
-
     unsigned int nextStateThread();
-
-    void particialNextState(unsigned int x , unsigned int y, unsigned int xx, unsigned int yy,  unsigned int &counter);
 
     class Cell getCell(int x, int y);
 
@@ -64,38 +60,29 @@ private:
 
     label label_of_the_Cell(std::vector<QRect> Object, std::vector<QRect> Background, QPoint p);
 
-    double find_MaxPNorm();
+    double find_MaxPNorm();// maximum norm of whole image
 
-    double norm(QRgb pix);
+    double norm(QRgb pix);// norm of the pixel
 
-    double normSub(QRgb pix1,QRgb pix2);
+    double normSub(QRgb pix1,QRgb pix2); // norm of the difference
 
-    double function_G(double x, double max);
-
-    QImage proccessingImg;
-
-    double max_norm;
+    double function_G(double x, double max);// regressive func to estimate color 'difference' of to pixels
 
     void von_Neumann_Neighborhood(unsigned int x, unsigned int y);
 
-    std::vector<int> width_it;
-    std::vector<int> Height_it;
-    std::vector< std::thread* > t;
-    std::vector< unsigned int > counters;
-    unsigned int q_treads;
-    std::vector<std::vector<std::vector<double> > > vector_difference;
-    class MyPoint;
-    std::map < MyPoint, Cell> Change;
-    std::vector< std::vector<Cell > > cells;
-    std::vector<std::vector<std::vector<class Cell*> > > neighbors;
-    std::mutex now_it_gonna_work;
+    void particialNextState(unsigned int x , unsigned int y, unsigned int xx, unsigned int yy,  unsigned int &counter);
 
-    class MyPoint: public QPoint{
-    public:
-        MyPoint(int x, int y): QPoint(x,y){}
-
-        bool operator<(const MyPoint &rhs) const{return true;}
-    };
+    std::vector<int> width_it;                                         // division of the image
+    std::vector<int> Height_it;                                        // ---
+    std::vector< std::thread* > threads;                               // ...
+    std::vector< unsigned int > counters;                              // counters for each thread
+    unsigned int q_treads;                                             // q_treads^2 is a quantity of threads
+    std::vector<std::vector<std::vector<double> > > vector_difference; // norm difference between cell and its neighbors
+    std::vector< std::vector<Cell > > cells;                           // cells of the image
+    std::vector<std::vector<std::vector<class Cell*> > > neighbors;    // pointers to the neighbors
+    std::mutex now_it_gonna_work;                                      // mutex for blocking access to changing state of 'cells'
+    double max_norm;
+    QImage proccessingImg;
 
 };
 
