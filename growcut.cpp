@@ -7,7 +7,7 @@ GrowCut::GrowCut()
 }
 
 //initialize initial conditions
-bool GrowCut::init(QImage &image, std::vector<QRect> &Object, std::vector<QRect> &Background)
+bool GrowCut::init(QImage &image, std::vector<QRect> &Object, std::vector<QRect> &Background, unsigned int &n)
 {
 
 
@@ -45,6 +45,12 @@ bool GrowCut::init(QImage &image, std::vector<QRect> &Object, std::vector<QRect>
         }
     }
 
+    for(unsigned int i = 0; i < n+1; i++){
+        width_it.push_back(ceil(( int)proccessingImg.width() * (i) / n));
+        Height_it.push_back(ceil(( int)proccessingImg.height() * (i) / n));
+    }
+
+    q_treads = n;
 
 
     return true;
@@ -238,20 +244,16 @@ unsigned int GrowCut::RecomendedChange(){
     return (unsigned int)(proccessingImg.height()* proccessingImg.width() * 0.00001);
 }
 
-unsigned int GrowCut::nextStateThread(unsigned int &n){
+unsigned int GrowCut::nextStateThread(){
 
     unsigned int res = 0;
 
-    for(unsigned int i = 0; i < n+1; i++){
-        width_it.push_back(ceil(( int)proccessingImg.width() * (i) / n));
-        Height_it.push_back(ceil(( int)proccessingImg.height() * (i) / n));
-    }
+    counters  = std::vector<unsigned int>( q_treads * q_treads , 0);
 
-    counters  = std::vector<unsigned int>(n*n, 0);
-    for(unsigned int i = 0; i < n; i++){
-        for(unsigned int j = 0; j < n; j++){
+    for(unsigned int i = 0; i < q_treads; i++){
+        for(unsigned int j = 0; j < q_treads; j++){
                  t.push_back(new std::thread( &GrowCut::particialNextState ,this, width_it[i], width_it[i+1],
-                             Height_it[j], Height_it[j+1], std::ref( counters[i*n + j] ) ));
+                             Height_it[j], Height_it[j+1], std::ref( counters[i*q_treads + j] ) ));
         }
     }
 
@@ -261,16 +263,14 @@ unsigned int GrowCut::nextStateThread(unsigned int &n){
 
 
     for(unsigned int i = 0; i < t.size(); i++){
-        delete t[i];
+         delete t[i];
     }
-
-
 
     t.erase(t.begin(),t.end());
 
     for (auto it = Change.begin(); it != Change.end(); ++it)
     {
-       cells[it->second.x()][it->second.y()] = it->first;
+       cells[it->first.x()][it->first.y()] = it->second;
     }
 
     Change.erase(Change.begin(),Change.end());
@@ -301,8 +301,12 @@ void GrowCut::particialNextState(unsigned int x , unsigned int xx, unsigned int 
                    if( cell_assault_power > cells[i][j].Strenght )
                    {
                         Cell change_cell(neighbors[i][j][k]->Label,cell_assault_power,cells[i][j].Feature_vector);
+
                         counter++;
-                        Change.insert( std::pair< Cell, QPoint >( change_cell , QPoint(i,j) ) );
+
+                        now_it_gonna_work.lock();
+                        Change.insert( std::pair< MyPoint, Cell >(  MyPoint(i,j),change_cell  ) );
+                        now_it_gonna_work.unlock();
                    }
                }
             }

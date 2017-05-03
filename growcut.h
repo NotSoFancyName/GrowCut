@@ -9,6 +9,7 @@
 #include <map>
 #include <QPoint>
 #include <utility>
+#include <mutex>
 
 
 // Algorithm from http://www.graphicon.ru/oldgr/en/publications/text/gc2005vk.pdf
@@ -28,7 +29,7 @@ public:
 
     GrowCut();
 
-    bool init(QImage &image, std::vector<QRect> &Object, std::vector<QRect> &Background);
+    bool init(QImage &image, std::vector<QRect> &Object, std::vector<QRect> &Background,unsigned int &n);
 
     QImage getObject();
 
@@ -38,7 +39,7 @@ public:
 
     unsigned int RecomendedChange();
 
-    unsigned int nextStateThread(unsigned int &n);
+    unsigned int nextStateThread();
 
     void particialNextState(unsigned int x , unsigned int y, unsigned int xx, unsigned int yy,  unsigned int &counter);
 
@@ -60,13 +61,6 @@ public:
 
 private:
 
-    std::vector< std::vector<Cell > > cells;
-
-    std::vector<std::vector<std::vector<class Cell*> > > neighbors;
-
-    std::vector<std::vector<std::vector<double> > > vector_difference;
-
-    std::map < Cell, QPoint> Change;
 
     label label_of_the_Cell(std::vector<QRect> Object, std::vector<QRect> Background, QPoint p);
 
@@ -88,7 +82,20 @@ private:
     std::vector<int> Height_it;
     std::vector< std::thread* > t;
     std::vector< unsigned int > counters;
+    unsigned int q_treads;
+    std::vector<std::vector<std::vector<double> > > vector_difference;
+    class MyPoint;
+    std::map < MyPoint, Cell> Change;
+    std::vector< std::vector<Cell > > cells;
+    std::vector<std::vector<std::vector<class Cell*> > > neighbors;
+    std::mutex now_it_gonna_work;
 
+    class MyPoint: public QPoint{
+    public:
+        MyPoint(int x, int y): QPoint(x,y){}
+
+        bool operator<(const MyPoint &rhs) const{return true;}
+    };
 
 };
 
